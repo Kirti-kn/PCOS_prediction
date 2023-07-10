@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PCOS Detection</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>PCOS Detection</h1>
+
+    <form id="image-form" enctype="multipart/form-data">
+        <input type="file" name="image" id="image-upload">
+        <input type="button" value="Upload" onclick="predictImage()">
+    </form>
+
+    <div id="prediction-container">
+        <label>Prediction: </label>
+        <span id="prediction-value"></span>
+    </div>
+
+    <script>
+        function predictImage() {
+            var fileInput = document.getElementById('image-upload');
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('image_data', file);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var predictionValue = document.getElementById('prediction-value');
+                predictionValue.textContent = data.prediction;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
